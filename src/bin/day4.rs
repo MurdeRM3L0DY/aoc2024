@@ -30,11 +30,7 @@ impl CharMatrix {
     fn offset_to_coord(&self, off: usize) -> (u32, u32) {
         let off = off as u32;
         let row = off / self.cols;
-        let col = if off < self.cols {
-            off
-        } else {
-            (off % self.cols).clamp(0, self.cols - 1)
-        };
+        let col = off % self.cols;
         (row, col)
     }
 }
