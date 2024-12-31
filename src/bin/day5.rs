@@ -46,27 +46,27 @@ fn parse(input: &str) -> nom::IResult<&str, InputData> {
     }))
 }
 
-struct PageSuccPairIter<'a> {
-    pages: &'a [u32],
+struct SuccPairIter<'a> {
+    data: &'a [u32],
     i: usize,
 }
 
-impl<'a> PageSuccPairIter<'a> {
-    fn new(pages: &'a [u32]) -> Self {
-        PageSuccPairIter { pages, i: 0 }
+impl<'a> SuccPairIter<'a> {
+    fn new(data: &'a [u32]) -> Self {
+        SuccPairIter { data, i: 0 }
     }
 }
 
-impl Iterator for PageSuccPairIter<'_> {
+impl Iterator for SuccPairIter<'_> {
     type Item = (u32, u32);
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.i >= self.pages.len() {
+        if self.i >= self.data.len() {
             return None;
         }
 
         let i = self.i;
-        let pages = self.pages;
+        let pages = self.data;
 
         let j = i + 1;
         if j < pages.len() {
@@ -83,7 +83,7 @@ fn part1(data: &InputData) -> anyhow::Result<()> {
     let result = data
         .pages
         .iter()
-        .filter(|page| PageSuccPairIter::new(page).all(|pp| data.constraints.contains(&pp)))
+        .filter(|page| SuccPairIter::new(page).all(|pp| data.constraints.contains(&pp)))
         .map(|page| page[page.len() / 2]) // pages are always odd length
         // .inspect(|pp| println!("{:?}", pp))
         .sum::<u32>();
@@ -96,7 +96,7 @@ fn part2(data: &InputData) -> anyhow::Result<()> {
     let result = data
         .pages
         .iter()
-        .filter(|page| PageSuccPairIter::new(page).any(|pp| !data.constraints.contains(&pp)))
+        .filter(|page| SuccPairIter::new(page).any(|pp| !data.constraints.contains(&pp)))
         .cloned()
         .map(|mut p| {
             let valid_constraints = p
